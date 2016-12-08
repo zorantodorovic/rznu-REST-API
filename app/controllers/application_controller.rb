@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
 	before_action  :log_request
+  before_action :validate_login
 
   def log_request
     user_agent = UserAgent.parse(request.user_agent)
@@ -27,12 +28,27 @@ class ApplicationController < ActionController::API
     head 409 and return
   end
 
-  def validate_user
+  def validate_login
     token = request.headers["X-Api-Key"]
-    head 403 and return unless token
+    return unless token
     user = User.find_by token: token
-    head 403 and return unless user
+    return unless user
+    if 15.minutes.ago < user.updated_at
+      user.touch
+      @current_user = user
+    end
   end
+
+  def validate_user
+    head 403 and return unless @current_user
+  end
+
+  # def validate_user
+  #   token = request.headers["X-Api-Key"]
+  #   head 403 and return unless token
+  #   user = User.find_by token: token
+  #   head 403 and return unless user
+  # end
 
 	private
   def render_error(resource, status)

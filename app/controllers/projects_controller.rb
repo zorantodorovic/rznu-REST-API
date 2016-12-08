@@ -1,6 +1,7 @@
 class ProjectsController < ApplicationController
 
 	before_action :set_user
+  before_action :validate_login
 
   def index
     projects = @user.projects
