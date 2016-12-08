@@ -1,5 +1,13 @@
 class ApplicationController < ActionController::API
-	before_action :check_header
+	before_action :check_header, :log_request
+
+  def log_request
+    user_agent = UserAgent.parse(request.user_agent)
+
+    open('log.txt', 'a') { |f|
+      f.puts request.path + " " + user_agent.browser
+  }
+  end
 
 	private
   def check_header
