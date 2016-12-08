@@ -1,11 +1,26 @@
-echo "First test : Login should fail"
 
-curl -X POST -H "Content-Type: application/json" http://localhost:3000/sessions -d '{"username":"zora\n.todorovic@fer.hr",
-"password":"password"}' -w "%{http_code}"> out1 2> /dev/null
-# if diff out1 expected1 > /dev/null ; then
-# 	echo "First test - OK"
-# else
+# echo "First test : Login should pass"
+
+# RESPONSE = curl -X POST -H "Content-Type: application/json"  http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr",
+# "password":"password"}' -w "%{http_code}" > out1 2> /dev/null
+# if [ "$RESPONSE" == "406" ] 
+# then
 # 	echo "First test - FAIL"
+# else
+# 	echo "First test - ok"
+# fi
+
+
+# echo "Second test : Login should fail"
+
+# JEDAN = curl -X POST -H "Content-Type: application/json" http://localhost:3000/sessions -d '{"username":"invaliduser@fer.hr",
+# "password":"password"}' -w "%{http_code}" > out1 2> /dev/null
+# if [ "$JEDAN" != "406" ] 
+# then
+# 	echo "Second test - FAIL"
+# 	echo "$JEDAN"
+# else
+# 	echo "Second test - OK"
 # fi
 
 # echo "Second test : Invalid login"
