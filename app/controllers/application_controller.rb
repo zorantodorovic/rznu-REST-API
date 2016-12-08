@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-	before_action :check_header, :log_request
+	before_action  :log_request
 
   def log_request
     user_agent = UserAgent.parse(request.user_agent)

@@ -1,3 +1,3 @@
 class SessionSerializer < ActiveModel::Serializer
-  attributes :id, :full_name, :token
+  attributes :id, :username, :full_name, :token
 end
