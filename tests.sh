@@ -1,14 +1,113 @@
+echo "1. test: get list of users"
 
-# echo "First test : Login should pass"
+RESPONSE=$(curl --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users)
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]; then
+	printf "1. test - ok \n \n"
+else 
+	printf "1. test - fail \n \n"
+fi
 
-# RESPONSE = curl -X POST -H "Content-Type: application/json"  http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr",
-# "password":"password"}' -w "%{http_code}" > out1 2> /dev/null
-# if [ "$RESPONSE" == "406" ] 
-# then
-# 	echo "First test - FAIL"
-# else
-# 	echo "First test - ok"
-# fi
+
+echo "2. test: login user"
+RESPONSE=$(curl -X POST -H "Content-Type: application/json" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr","password":"password"}')
+echo $RESPONSE
+# RESPONSE = $(curl -X POST -H "Content-Type: application/json"  http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr",
+# "password":"password"}' -w "%{http_code}")
+if [[ $RESPONSE == 201 ]]
+then
+	printf "2. test - ok \n \n"
+else
+	printf "2. test - fail \n \n"
+fi
+
+echo "GET TOKEN:"
+TOKEN=$(curl -X POST -H "Content-Type: application/json" http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr","password":"password"}' | python -m json.tool | python -c 'import sys, json; print json.load(sys.stdin)["data"]["attributes"]["token"]')
+printf "$TOKEN \n \n \n"
+
+
+echo "3. test: get current user"
+RESPONSE=$(curl -X GET -H "Content-Type: application/json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1)
+echo $RESPONSE
+# RESPONSE = $(curl -X POST -H "Content-Type: application/json"  http://localhost:3000/sessions -d '{"username":"zoran.todorovic@fer.hr",
+# "password":"password"}' -w "%{http_code}")
+if [[ $RESPONSE == 200 ]]
+then
+	printf "3. test - ok \n \n"
+else
+	printf "3. test - fail \n \n"
+fi
+
+
+echo "4. test: update user"
+RESPONSE=$(curl -X PATCH -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1 -d '{"data":{"type":"users","attributes":{"full_name":"Zoran Todorovic updated"}}}')
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]
+then
+	printf "4. test - ok \n \n"
+else
+	printf "4. test - fail \n \n"
+fi
+
+
+echo "5. test: create user"
+RESPONSE=$(curl -X POST -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users -d '{"data": {"type": "users","attributes": {"username": "exampleusername","full-name": "Example user","password": "password"}}}')
+echo $RESPONSE
+if [[ $RESPONSE == 201 ]]
+then
+	printf "5. test - ok \n \n"
+else
+	printf "5. test - fail \n \n"
+fi
+
+
+echo "6. test: get users list of projects"
+RESPONSE=$(curl -X GET -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects )
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]
+then
+	printf "6. test - ok \n \n"
+else
+	printf "6. test - fail \n \n"
+fi
+
+
+echo "7. test: get first users project with id 1"
+RESPONSE=$(curl -X GET -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/1 )
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]
+then
+	printf "7. test - ok \n \n"
+else
+	printf "7. test - fail \n \n"
+fi
+
+
+echo "8. test: get first users project with id 1"
+RESPONSE=$(curl -X GET -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/1 )
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]
+then
+	printf "8. test - ok \n \n"
+else
+	printf "8. test - fail \n \n"
+fi
+
+{
+  "data": {
+    "id": "1",
+    "type": "projects",
+    "attributes": {
+      "title": "Projekt 1",
+      "content": "content od Zoran Todorovic",
+      "category": null,
+      "rating": null,
+      "created-at": "2016-12-08T20:20:01.141Z",
+      "updated-at": "2016-12-08T20:20:01.141Z"
+    }
+  }
+}
+
 
 
 # echo "Second test : Login should fail"

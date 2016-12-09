@@ -1,5 +1,4 @@
 class ProjectsController < ApplicationController
-
 	before_action :set_user
   before_action :validate_login
 
@@ -31,7 +30,8 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-  	@project.destroy
+    @project = @user.projects.find(params[:id])
+    @project.destroy
     head 204
   end
 
