@@ -83,30 +83,40 @@ else
 fi
 
 
-echo "8. test: get first users project with id 1"
-RESPONSE=$(curl -X GET -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/1 )
+echo "8. test: delete first users project with id 24"
+RESPONSE=$(curl -X DELETE -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/24)
 echo $RESPONSE
-if [[ $RESPONSE == 200 ]]
+if [[ $RESPONSE == 204 ]]
 then
 	printf "8. test - ok \n \n"
 else
 	printf "8. test - fail \n \n"
 fi
 
-{
-  "data": {
-    "id": "1",
-    "type": "projects",
-    "attributes": {
-      "title": "Projekt 1",
-      "content": "content od Zoran Todorovic",
-      "category": null,
-      "rating": null,
-      "created-at": "2016-12-08T20:20:01.141Z",
-      "updated-at": "2016-12-08T20:20:01.141Z"
-    }
-  }
-}
+
+
+echo "9. test: update first users project with id 1"
+RESPONSE=$(curl -X PATCH -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/1 -d '{"data": {"id": "1","type": "projects","attributes": {"title": "Projekt prvi","rating": 1}}}')
+echo $RESPONSE
+if [[ $RESPONSE == 200 ]]
+then
+	printf "9. test - ok \n \n"
+else
+	printf "9. test - fail \n \n"
+fi
+
+# echo "9. test: delete first users project with id 9"
+# RESPONSE=$(curl -X PATCH -H "Content-Type: application/vnd.api+json" -H "X-Api-Key: $TOKEN" --write-out %{http_code} --silent --output /dev/null http://localhost:3000/users/1/projects/9 -d '{"data": {"id": "1","type": "projects","attributes": {"title": "Projekt prvi","rating": 1}}}')
+# echo $RESPONSE
+# if [[ $RESPONSE == 200 ]]
+# then
+# 	printf "9. test - ok \n \n"
+# else
+# 	printf "9. test - fail \n \n"
+# fi
+
+
+
 
 
 
